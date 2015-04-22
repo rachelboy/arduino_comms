@@ -30,7 +30,7 @@ class Lights():
         p_code = self.encode_prd(prd*2)+128
         self.send_msg(light, red, green, blue, p_code)
 
-    def get_rgb(rgb, brightness):
+    def get_rgb(self, rgb, brightness):
         brightness = min(1, max(0, brightness))
         if type(rgb) == str:
             return [brightness*color for color in self.colors[rgb]]

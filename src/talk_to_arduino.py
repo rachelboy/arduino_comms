@@ -9,7 +9,7 @@ from std_msgs.msg import Bool
 
 from time import time
 
-class ArduinoComm():
+class ArduinoComms():
 
     def __init__(self):
         rospy.init_node("talk_to_arduino")
@@ -22,46 +22,47 @@ class ArduinoComm():
         self.estop_pub = rospy.Publisher("estop", Bool)
         self.estop = -1
 
+        self.light_map = {"FRT": 0,
+                          "FRB": 1,
+                          "FLT": 2,
+                          "FLB": 3,
+                          "BRT": 4,
+                          "BRB": 5,
+                          "BLT": 6,
+                          "BLB": 7}
+
         self.robot_state = ["stopped","stopped"]
         self.stopped_lights()
 
-        self.light_map = ["FRT": 1,
-                          "FRB": 2,
-                          "FLT": 3,
-                          "FLB": 4,
-                          "BRT": 5,
-                          "BRB": 6,
-                          "BLT": 7,
-                          "BLB": 8]
 
 
     def stopped_lights(self):
-        for light, num in self.light_map.keys():
-            if light[3] == "T":
+        for light, num in self.light_map.items():
+            if light[2] == "T":
                 self.lights.fade(num, "turquoise", 16)
             else:
                 self.lights.solid_color(num, [0,0,0])
 
     def forward_lights(self):
-        for light, num in self.light_map.keys():
-            if light[3] == "T":
-                if light[1] == "F":
+        for light, num in self.light_map.items():
+            if light[2] == "T":
+                if light[0] == "F":
                     self.lights.solid_color(num, "white")
                 else:
                     self.lights.solid_color(num, "turquoise")
 
     def reverse_lights(self):
-        for light, num in self.light_map.keys():
-            if light[3] == "T":
-                if light[1] == "B":
+        for light, num in self.light_map.items():
+            if light[2] == "T":
+                if light[0] == "B":
                     self.lights.solid_color(num, "white")
                 else:
                     self.lights.solid_color(num, "turquoise")
 
     def turn(self,direction):
-        for light, num in self.light_map.keys():
-            if light[3] == "B":
-                if light[2] == direction:
+        for light, num in self.light_map.items():
+            if light[2] == "B":
+                if light[1] == direction:
                     self.lights.blink(num, "amber", 4)
                 else:
                     self.lights.solid_color(num, [0,0,0])
