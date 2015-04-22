@@ -40,7 +40,7 @@ def makeGoLights(data):
 if __name__ == "__main__":
 
     rospy.init_node("talk_to_arduino")
-    port = rospy.get_param("arduino_port", "/dev/ttyACM1")
+    port = rospy.get_param("arduino_port", "/dev/ttyACM0")
     ser = serial.Serial(port, 9600, timeout=0)
 
     lights = light_control.Lights(ser)
