@@ -15,29 +15,27 @@ class Lights():
                        "white": [255,255,255],
                        "orange": [255,30,0]}
 
-    def solid_color(self,light, rgb):
+    def solid_color(self,light, rgb, brightness = 1):
         '''turn a given light the given rgb value'''
-        if type(rgb) == str:
-            red, green, blue = self.colors[rgb]
-        else:
-            red, green, blue = rgb
+        red, green, blue = self.get_rgb(rgb, brightness)
         self.send_msg(light, red, green, blue, 0)
 
-    def blink(self,light, rgb, prd):
-        if type(rgb) == str:
-            red, green, blue = self.colors[rgb]
-        else:
-            red, green, blue = rgb
+    def blink(self,light, rgb, prd, brightness = 1):
+        red, green, blue = self.get_rgb(rgb, brightness)
         p_code = self.encode_prd(prd)
         self.send_msg(light, red, green, blue, p_code)
 
-    def fade(self,light, rgb, prd):
-        if type(rgb) == str:
-            red, green, blue = self.colors[rgb]
-        else:
-            red, green, blue = rgb
+    def fade(self,light, rgb, prd, brightness = 1):
+        red, green, blue = self.get_rgb(rgb, brightness)
         p_code = self.encode_prd(prd*2)+128
         self.send_msg(light, red, green, blue, p_code)
+
+    def get_rgb(rgb, brightness):
+        brightness = min(1, max(0, brightness))
+        if type(rgb) == str:
+            return [brightness*color for color in self.colors[rgb]]
+        else:
+            return [brightness*color for color in rgb]
 
     def encode_prd(self,prd):
         prd = max(1000*prd, 2) # get the period in ms, at least 2 ms
