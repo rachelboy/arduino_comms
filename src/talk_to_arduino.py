@@ -13,7 +13,7 @@ class ArduinoComms():
 
     def __init__(self):
         rospy.init_node("talk_to_arduino")
-        self.port = rospy.get_param("arduino_port", "/dev/ttyACM0")
+        self.port = rospy.get_param("arduino_port", "/dev/arduino")
         self.ser = serial.Serial(self.port, 9600, timeout=0)
 
         self.lights = light_control.Lights(self.ser)
