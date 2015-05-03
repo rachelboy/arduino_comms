@@ -1,7 +1,7 @@
 import math
 
 class Lights():
-  '''Talks to an arduino to control the lights'''
+    '''Talks to an arduino to control the lights'''
 
     def __init__(self, ser, num_lights=8):
         self.ser = ser # serial.Serial interface to the arduino
@@ -23,7 +23,7 @@ class Lights():
         '''turn a given light the given rgb value, optionally scaled by the 
         brightness. rgb can be either a name from Lights.colors or 
         [red,green,blue] integer values between 0 and 255'''
-        if light >= 0 and light < num_lights:
+        if light >= 0 and light < self.num_lights:
             red, green, blue = self.get_rgb(rgb, brightness)
             self.send_msg(light, red, green, blue, 0)
 
@@ -32,7 +32,7 @@ class Lights():
         specified by prd, optionally scaled by the brightness. rgb can be either 
         a name from Lights.colors or [red,green,blue] integer values between 0 
         and 255'''
-        if light >= 0 and light < num_lights:
+        if light >= 0 and light < self.num_lights:
             red, green, blue = self.get_rgb(rgb, brightness)
             p_code = self.encode_prd(prd)
             self.send_msg(light, red, green, blue, p_code)
@@ -42,7 +42,7 @@ class Lights():
         in seconds specified by prd. The maximum rgb value can be optionally 
         scaled by the brightness. rgb can be either a name from Lights.colors or 
         [red,green,blue] integer values between 0 and 255'''
-        if light >= 0 and light < num_lights:
+        if light >= 0 and light < self.num_lights:
             red, green, blue = self.get_rgb(rgb, brightness)
             p_code = min(self.encode_prd(prd*2)+128, 255)
             self.send_msg(light, red, green, blue, p_code)
