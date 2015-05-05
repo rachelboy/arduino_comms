@@ -14,10 +14,11 @@ class Lights():
                        "green": [0,255,0],
                        "blue": [0,0,255],
                        "amber": [255,70,0],
-                       "turquoise": [0,255,150],
+                       "turquoise": [0,255,130],
                        "purple": [255,0,255],
                        "white": [255,255,255],
-                       "orange": [255,30,0]}
+                       "orange": [255,30,0],
+                       "off": [0,0,0]}
 
     def solid_color(self, light, rgb, brightness = 1):
         '''turn a given light the given rgb value, optionally scaled by the 
@@ -52,9 +53,9 @@ class Lights():
         values scaled by brightness'''
         brightness = min(1, max(0, brightness))
         if type(rgb) == str:
-            return [brightness*color for color in self.colors[rgb]]
+            return [int(brightness*color) for color in self.colors[rgb]]
         else:
-            return [brightness*color for color in rgb]
+            return [int(brightness*color) for color in rgb]
 
     def encode_prd(self,prd):
         '''takes the desired period in seconds, and encodes it for transmission 
