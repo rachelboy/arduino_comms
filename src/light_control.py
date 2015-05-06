@@ -20,6 +20,10 @@ class Lights():
                        "orange": [255,30,0],
                        "off": [0,0,0]}
 
+    def off(self):
+        for i in range(8):
+            self.solid_color(i,"off")
+
     def solid_color(self, light, rgb, brightness = 1):
         '''turn a given light the given rgb value, optionally scaled by the 
         brightness. rgb can be either a name from Lights.colors or 
@@ -50,12 +54,48 @@ class Lights():
 
     def get_rgb(self, rgb, brightness):
         '''takes either a color name or [red, green, blue], and returns rgb 
-        values scaled by brightness'''
+        values scaled by brightness.
+        Will adjust rgb values to make sure that no two are exactly the same - 
+        that makes the hardware very upset, for reasons we havent been able to fix'''
         brightness = min(1, max(0, brightness))
         if type(rgb) == str:
-            return [int(brightness*color) for color in self.colors[rgb]]
+            val = [int(brightness*color/5.0)*5 for color in self.colors[rgb]]
         else:
-            return [int(brightness*color) for color in rgb]
+            val = [int(brightness*color/5.0)*5 for color in rgb]
+        if val == [0,0,0]:
+            return val
+        if val[2] == val[1] and val[1] == val[0]:
+            if val[2] < 5:
+                val[0] += 5
+                val[1] += 10
+            elif val[1] > 250:
+                val[0] -= 5
+                val[2] -= 10
+            else:
+                val[1] += 5
+                val[2]-=5
+            return val
+        elif val[0] == val[1]:
+            return self.balance(val,0,1,2)
+        elif val[0] == val[2]:
+            return self.balance(val,0,2,1)
+        elif val[1] == val[2]:
+            return self.balance(val,1,2,0)
+        else:
+            return val
+
+    def balance(self,val,a,b,c):
+        '''val[a] == val[b] != val[c].
+        Change val so that val[a] != val[b] != val[c]'''
+        if val[a] > 245:
+            val[b] -= 5
+            if val[b] == val[c]:
+                val[c] -= 5
+        else:
+            val[a] += 5
+            if val[a] == val[b]:
+                val[b] += 5
+        return val
 
     def encode_prd(self,prd):
         '''takes the desired period in seconds, and encodes it for transmission 
