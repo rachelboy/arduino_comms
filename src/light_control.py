@@ -14,7 +14,7 @@ class Lights():
                        "green": [0,255,0],
                        "blue": [0,0,255],
                        "amber": [255,70,0],
-                       "turquoise": [0,255,130],
+                       "turquoise": [0,180,130],
                        "purple": [255,0,255],
                        "white": [255,255,255],
                        "orange": [255,30,0],

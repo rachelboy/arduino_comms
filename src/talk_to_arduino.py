@@ -36,6 +36,7 @@ class ArduinoComms():
                           "BLB": 7}
 
         self.robot_state = ["stopped","stopped"] # [turning, direction of travel]
+        self.last_command = 0
         self.stopped_lights()
 
 
@@ -87,28 +88,36 @@ class ArduinoComms():
         speed = data.linear.x
         angle = data.angular.z
 
-        # robot_state is used so that light commands are sent only 
+        # robot_state is used so that light commands are sent
         # when the light pattern changes
+        time_since = time() - self.last_command()
 
-        if angle < -.2 and self.robot_state[0] != "right":
+
+        if angle < -.15 and (self.robot_state[0] != "right" or time_since >.5):
             self.robot_state[0] = "right"
             self.turn("R")
-        elif angle > .2  and self.robot_state[0] != "left":
+            self.last_command = time()
+        elif angle > .15  and (self.robot_state[0] != "left" or time_since >.5):
             self.robot_state[0] = "left"
             self.turn("L")
-        elif self.robot_state[0] != "stopped":
+            self.last_command = time()
+        elif (self.robot_state[0] != "stopped" or time_since >.5):
             self.robot_state[0] = "stopped"
             self.turn("off")
+            self.last_command = time()
 
-        if speed == 0  and self.robot_state[1] != "stopped":
-            self.robot_state[1] = "stopped"
-            self.stopped_lights()
-        elif speed < 0  and self.robot_state[1] != "reverse":
-            self.robot_state[1] = "reverse"
-            self.reverse_lights()
-        elif self.robot_state[1] != "forward":
+        if speed > 0.05  and (self.robot_state[1] != "forward" or time_since >.5):
             self.robot_state[1] = "forward"
             self.forward_lights()
+            self.last_command = time()
+        elif speed < 0.05  and (self.robot_state[1] != "reverse" or time_since >.5):
+            self.robot_state[1] = "reverse"
+            self.reverse_lights()
+            self.last_command = time()
+        elif (self.robot_state[1] != "stopped" or time_since >.5):
+            self.robot_state[1] = "stopped"
+            self.stopped_lights()
+            self.last_command = time()
 
     def execute(self):
         r = rospy.Rate(4)
